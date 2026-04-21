@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prayer & Meditation | HealthAI+</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { text-align: center; color: white; margin-bottom: 40px; }
+    .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+    .back-btn { background: rgba(255,255,255,0.2); border: none; padding: 10px 20px; border-radius: 30px; color: white; cursor: pointer; margin-bottom: 20px; }
+    .prayer-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 30px;
+      padding: 30px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .prayer-text {
+      font-size: 1.3rem;
+      line-height: 1.8;
+      color: #2c3e50;
+      font-style: italic;
+      margin: 20px 0;
+    }
+    .prayer-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .prayer-btn {
+      background: linear-gradient(135deg, #f093fb, #f5576c);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .peace-quote {
+      background: rgba(255,255,255,0.2);
+      border-radius: 30px;
+      padding: 25px;
+      text-align: center;
+      color: white;
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1><i class="fas fa-hands-praying"></i> Prayer & Peace</h1>
+    <p>Find inner peace and gratitude</p>
+    <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+  </div>
+  <div class="prayer-card">
+    <i class="fas fa-heart" style="font-size: 2rem; color: #f5576c;"></i>
+    <div class="prayer-text" id="prayerText">
+      "May I be filled with loving-kindness.<br>
+      May I be safe from inner and outer dangers.<br>
+      May I be well in body and mind.<br>
+      May I live with ease and joy."
+    </div>
+    <div class="prayer-buttons">
+      <button class="prayer-btn" onclick="changePrayer('morning')">🌅 Morning Prayer</button>
+      <button class="prayer-btn" onclick="changePrayer('evening')">🌙 Evening Prayer</button>
+      <button class="prayer-btn" onclick="changePrayer('gratitude')">🙏 Gratitude Prayer</button>
+    </div>
+  </div>
+  <div class="peace-quote">
+    <i class="fas fa-feather-alt" style="font-size: 2rem;"></i>
+    <p style="font-size: 1.2rem; margin-top: 15px;">"Peace is not absence of conflict, it is the ability to handle conflict by peaceful means."</p>
+    <p>- Ronal Reagan</p>
+  </div>
+</div>
+<script>
+  const prayers = {
+    morning: "Thank you for this new day. Grant me wisdom, strength, and compassion. May I bring light to everyone I meet today.",
+    evening: "As the day ends, I release all worries. Thank you for the lessons learned. May I rest in peace and wake renewed.",
+    gratitude: "I am grateful for my health, my loved ones, and this beautiful life. Thank you for all the blessings, seen and unseen."
+  };
+  function changePrayer(type) {
+    document.getElementById('prayerText').innerHTML = `"${prayers[type]}"`;
+  }
+</script>
+</body>
+</html>

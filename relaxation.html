@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Wellness Hub | HealthAI+</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      padding: 35px 30px;
+      border-radius: 32px;
+      text-align: center;
+      width: 100%;
+      max-width: 450px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
+    }
+
+    h2 {
+      color: #fff;
+      margin-bottom: 25px;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .btn-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      text-decoration: none;
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 60px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: white;
+      text-align: center;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.5s, height 0.5s;
+    }
+
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn:hover {
+      transform: translateX(8px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    /* Button Colors with Gradients */
+    .games { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+    .yoga { background: linear-gradient(135deg, #1dd1a1, #10ac84); }
+    .news { background: linear-gradient(135deg, #54a0ff, #2e86de); }
+    .books { background: linear-gradient(135deg, #f368e0, #be2edd); }
+    .prayer { background: linear-gradient(135deg, #feca57, #ff9f43); color: #2c3e50; }
+    .meditation { background: linear-gradient(135deg, #5f27cd, #341f97); }
+    .calendar { background: linear-gradient(135deg, #10ac84, #1dd1a1); }
+
+    /* Icon styling */
+    .btn i {
+      font-size: 1.3rem;
+      width: 28px;
+    }
+
+    footer {
+      margin-top: 25px;
+      color: rgba(255,255,255,0.9);
+      font-size: 0.85rem;
+      font-weight: 500;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    /* Back button */
+    .back-link {
+      display: inline-block;
+      margin-top: 15px;
+      color: white;
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.8;
+      transition: 0.3s;
+    }
+
+    .back-link:hover {
+      opacity: 1;
+      transform: translateX(-5px);
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .container {
+        padding: 25px 20px;
+      }
+      h2 {
+        font-size: 1.6rem;
+      }
+      .btn {
+        padding: 14px 16px;
+        font-size: 0.9rem;
+      }
+      .btn i {
+        font-size: 1.1rem;
+      }
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .btn {
+      animation: fadeInUp 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .btn:nth-child(1) { animation-delay: 0.05s; }
+    .btn:nth-child(2) { animation-delay: 0.1s; }
+    .btn:nth-child(3) { animation-delay: 0.15s; }
+    .btn:nth-child(4) { animation-delay: 0.2s; }
+    .btn:nth-child(5) { animation-delay: 0.25s; }
+    .btn:nth-child(6) { animation-delay: 0.3s; }
+    .btn:nth-child(7) { animation-delay: 0.35s; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>
+    <i class="fas fa-leaf"></i> 
+    Wellness Hub
+    <i class="fas fa-heartbeat"></i>
+  </h2>
+
+  <div class="btn-grid">
+    <a href="games.html" class="btn games">
+      <i class="fas fa-gamepad"></i> 
+      Brain Games
+      <i class="fas fa-arrow-right" style="margin-left: auto; font-size: 0.9rem;"></i>
+    </a>
+    
+    <a href="yoga.html" class="btn yoga">
+      <i class="fas fa-praying-hands"></i> 
+      Yoga & Exercise
+      <i class="fas fa-arrow-right" style="margin-left: auto; font-size: 0.9rem;"></i>
+    </a>
+    
+    <a href="reading.html" class="btn news">
+      <i class="fas fa-newspaper"></i> 
+      Daily Newspaper
+      <i class="fas fa-arrow-right" style="margin-left: auto; font-size: 0.9rem;"></i>
+    </a>
+    
+    <a href="books.html" class="btn books">
+      <i class="fas fa-book-open"></i> 
+      Moral Books Library
+      <i class="fas fa-arrow-right" style="margin-left: auto; font-size: 0.9rem;"></i>
+    </a>
+    
+    <a href="prayer.html" class="btn prayer">
+      <i class="fas fa-hands-praying"></i> 
+      Prayer & Peace
+      <i class="fas fa-arrow-right" style="margin-left: auto; font-size: 0.9rem;"></i>
+    </a>
+    
+    <a href="meditation.html" class="btn meditation">
+      <i class="fas fa-spa"></i> 
+      Meditation Studio
+      <i class="fas fa-arrow-right" style="margin-left: auto; font-size: 0.9rem;"></i>
+    </a>
+    
+    <a href="calendar.html" class="btn calendar">
+      <i class="fas fa-calendar-alt"></i> 
+      Daily Planner Calendar
+      <i class="fas fa-arrow-right" style="margin-left: auto; font-size: 0.9rem;"></i>
+    </a>
+  </div>
+
+  <footer>
+    <i class="fas fa-star-of-life"></i>
+    ✨ Stay Healthy, Stay Happy ✨
+    <i class="fas fa-heart" style="color: #ff6b6b;"></i>
+  </footer>
+
+  <a href="index.html" class="back-link">
+    <i class="fas fa-arrow-left"></i> Back to Dashboard
+  </a>
+</div>
+
+<script>
+  // Add hover sound effect (optional - subtle)
+  const buttons = document.querySelectorAll('.btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('mouseenter', () => {
+      // Just a visual feedback - no sound to keep it clean
+      btn.style.transform = 'translateX(8px) scale(1.02)';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+    });
+  });
+</script>
+</body>
+</html>

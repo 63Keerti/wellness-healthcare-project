@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Calendar | HealthAI+</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .back-btn { background: #667eea; border: none; padding: 10px 20px; border-radius: 30px; color: white; cursor: pointer; margin-bottom: 20px; }
+    .calendar-card {
+      background: white;
+      border-radius: 30px;
+      padding: 30px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+      text-align: center;
+    }
+    .calendar-day {
+      padding: 15px;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .calendar-day:hover { background: #667eea; color: white; }
+    .calendar-day.today { background: #667eea; color: white; }
+    .tasks-section { margin-top: 30px; }
+    .task-item {
+      background: #f8f9fa;
+      padding: 12px;
+      border-radius: 15px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .add-task { display: flex; gap: 10px; margin-top: 20px; }
+    .add-task input { flex: 1; padding: 12px; border-radius: 30px; border: 1px solid #ddd; }
+    .add-task button { background: #667eea; color: white; border: none; padding: 12px 20px; border-radius: 30px; cursor: pointer; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1><i class="fas fa-calendar-alt"></i> Daily Planner Calendar</h1>
+    <p>Organize your day, organize your life</p>
+    <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+  </div>
+  <div class="calendar-card">
+    <div class="calendar-header">
+      <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+      <h2 id="monthYear"></h2>
+      <button onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="tasks-section">
+      <h3><i class="fas fa-tasks"></i> Tasks for <span id="selectedDate"></span></h3>
+      <div id="taskList"></div>
+      <div class="add-task">
+        <input type="text" id="newTask" placeholder="Add a task...">
+        <button onclick="addTask()">+ Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  let currentDate = new Date();
+  let tasks = JSON.parse(localStorage.getItem('calendarTasks')) || {};
+  
+  function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    document.getElementById('monthYear').innerHTML = `${currentDate.toLocaleString('default', { month: 'long' })} ${year}`;
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '<div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>';
+    for(let i = 0; i < firstDay; i++) grid.innerHTML += '<div></div>';
+    for(let d = 1; d <= daysInMonth; d++) {
+      const isToday = d === new Date().getDate() && year === new Date().getFullYear() && month === new Date().getMonth();
+      grid.innerHTML += `<div class="calendar-day ${isToday ? 'today' : ''}" onclick="selectDate(${d})">${d}</div>`;
+    }
+    selectDate(new Date().getDate());
+  }
+  
+  function selectDate(day) {
+    const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${day}`;
+    document.getElementById('selectedDate').innerHTML = `${day} ${currentDate.toLocaleString('default', { month: 'long' })}`;
+    const taskList = document.getElementById('taskList');
+    taskList.innerHTML = '';
+    if(tasks[dateKey]) {
+      tasks[dateKey].forEach((task, idx) => {
+        taskList.innerHTML += `<div class="task-item"><span>${task}</span><button onclick="deleteTask('${dateKey}', ${idx})" style="background:#e74c3c; border:none; padding:5px 10px; border-radius:20px; color:white;">Delete</button></div>`;
+      });
+    }
+  }
+  
+  function addTask() {
+    const input = document.getElementById('newTask');
+    if(!input.value.trim()) return;
+    const dateKey = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1}-${document.getElementById('selectedDate').innerText.split(' ')[0]}`;
+    if(!tasks[dateKey]) tasks[dateKey] = [];
+    tasks[dateKey].push(input.value);
+    localStorage.setItem('calendarTasks', JSON.stringify(tasks));
+    input.value = '';
+    selectDate(parseInt(dateKey.split('-')[2]));
+  }
+  
+  function deleteTask(dateKey, idx) {
+    tasks[dateKey].splice(idx, 1);
+    if(tasks[dateKey].length === 0) delete tasks[dateKey];
+    localStorage.setItem('calendarTasks', JSON.stringify(tasks));
+    selectDate(parseInt(dateKey.split('-')[2]));
+  }
+  
+  function changeMonth(delta) {
+    currentDate.setMonth(currentDate.getMonth() + delta);
+    renderCalendar();
+  }
+  renderCalendar();
+</script>
+</body>
+</html>

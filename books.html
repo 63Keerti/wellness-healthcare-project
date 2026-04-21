@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moral Books Library | HealthAI+</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { text-align: center; color: white; margin-bottom: 40px; }
+    .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+    .back-btn { background: rgba(255,255,255,0.2); border: none; padding: 10px 20px; border-radius: 30px; color: white; cursor: pointer; margin-bottom: 20px; }
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    .book-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 25px;
+      text-align: center;
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+    .book-card:hover { transform: translateY(-10px); }
+    .book-card i { font-size: 3rem; color: #3498db; margin-bottom: 15px; }
+    .book-card h3 { font-size: 1.3rem; margin-bottom: 10px; color: #2c3e50; }
+    .book-card p { color: #666; font-size: 0.9rem; margin-bottom: 15px; }
+    .moral-lesson {
+      background: #2c3e50;
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 40px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1><i class="fas fa-book"></i> Moral Books Library</h1>
+    <p>Wisdom for a better life</p>
+    <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+  </div>
+  <div class="books-grid">
+    <div class="book-card" onclick="showMoral('The Boy Who Cried Wolf', 'Always tell the truth. Losing trust is easy to do but hard to regain.')">
+      <i class="fas fa-wolf"></i>
+      <h3>The Boy Who Cried Wolf</h3>
+      <p>Aesop's Fable about honesty</p>
+    </div>
+    <div class="book-card" onclick="showMoral('The Golden Goose', 'Greed leads to loss. Be content with what you have.')">
+      <i class="fas fa-feather-alt"></i>
+      <h3>The Golden Goose</h3>
+      <p>Lesson about greed</p>
+    </div>
+    <div class="book-card" onclick="showMoral('The Tortoise and Hare', 'Slow and steady wins the race. Persistence beats arrogance.')">
+      <i class="fas fa-turtle"></i>
+      <h3>The Tortoise & Hare</h3>
+      <p>Value of consistency</p>
+    </div>
+    <div class="book-card" onclick="showMoral('The Lion and Mouse', 'No act of kindness is ever wasted. Help others, big or small.')">
+      <i class="fas fa-mouse"></i>
+      <h3>The Lion & Mouse</h3>
+      <p>Kindness matters</p>
+    </div>
+  </div>
+  <div id="moralLesson" class="moral-lesson">
+    <i class="fas fa-lightbulb"></i>
+    <h3 id="lessonTitle" style="margin:10px 0;">Today's Moral Lesson</h3>
+    <p id="lessonText">Click any book to discover its wisdom</p>
+  </div>
+</div>
+<script>
+  function showMoral(title, lesson) {
+    document.getElementById('lessonTitle').innerHTML = `📖 ${title}`;
+    document.getElementById('lessonText').innerHTML = lesson;
+    alert(`✨ Moral from "${title}":\n\n${lesson}`);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,656 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>AI HealthSim Pro | Intelligent Healthcare Dashboard</title>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-gradient: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+      --surface: rgba(255, 255, 255, 0.95);
+      --text: #1a2a3f;
+      --text-light: #2c3e50;
+      --border: rgba(0, 0, 0, 0.08);
+      --primary: #1a5f7a;
+      --primary-glow: #2c9cd4;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --card-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.15);
+      --glow: 0 0 15px rgba(44, 156, 212, 0.3);
+    }
+
+    body.dark {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --surface: rgba(30, 41, 59, 0.96);
+      --text: #f1f5f9;
+      --text-light: #cbd5e1;
+      --border: rgba(255, 255, 255, 0.1);
+      --card-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.5);
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text);
+      font-family: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+      padding: 28px 24px;
+      min-height: 100vh;
+      cursor: none;
+      transition: background 0.3s ease;
+    }
+
+    /* Custom Animated Cursor with Emoji */
+    .custom-cursor {
+      width: 32px;
+      height: 32px;
+      background: rgba(44, 156, 212, 0.25);
+      border: 2px solid var(--primary-glow);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, width 0.2s, height 0.2s;
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 0 12px rgba(44,156,212,0.6);
+    }
+
+    .custom-cursor::after {
+      content: "🩺";
+      position: absolute;
+      font-size: 20px;
+      opacity: 0.9;
+      transition: all 0.2s;
+    }
+
+    body.dark .custom-cursor::after {
+      content: "🌙";
+    }
+
+    .custom-cursor.hover {
+      width: 48px;
+      height: 48px;
+      background: rgba(44, 156, 212, 0.4);
+      backdrop-filter: blur(6px);
+    }
+
+    .custom-cursor.hover::after {
+      content: "✨";
+      font-size: 26px;
+    }
+
+    .container {
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    /* Header with Relaxation Button */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+      backdrop-filter: blur(10px);
+      background: rgba(255,255,255,0.1);
+      padding: 12px 28px;
+      border-radius: 80px;
+      border: 1px solid var(--border);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .relax-btn {
+      background: linear-gradient(135deg, #a8edea, #fed6e3);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 800;
+      color: #5d3a1a;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .relax-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      font-size: 2rem;
+      background: linear-gradient(125deg, #1a5f7a, #3b82f6, #06b6d4);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      letter-spacing: -0.5px;
+    }
+
+    .mode-toggle {
+      background: var(--surface);
+      border: none;
+      padding: 10px 24px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--text);
+      box-shadow: var(--card-shadow);
+      transition: 0.2s;
+      font-size: 0.9rem;
+    }
+
+    /* Data Entry Panel - Glassmorphism */
+    .data-entry-panel {
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      border-radius: 42px;
+      padding: 2rem;
+      margin-bottom: 40px;
+      border: 1px solid var(--border);
+      box-shadow: var(--card-shadow);
+    }
+
+    .entry-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(120deg, var(--primary), var(--primary-glow));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 22px;
+      margin-bottom: 32px;
+    }
+
+    .input-group label {
+      font-weight: 700;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 28px;
+      border: 1px solid var(--border);
+      background: var(--bg-gradient);
+      color: var(--text);
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .primary-btn {
+      background: linear-gradient(95deg, #1a5f7a, #2c9cd4);
+      border: none;
+      padding: 14px 32px;
+      border-radius: 60px;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      color: white;
+      transition: 0.3s;
+      box-shadow: 0 8px 20px rgba(26,95,122,0.3);
+    }
+
+    .primary-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 28px rgba(44,156,212,0.5);
+    }
+
+    /* Dashboard Grid */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 28px;
+      margin-top: 24px;
+    }
+
+    .card {
+      background: var(--surface);
+      backdrop-filter: blur(8px);
+      border-radius: 36px;
+      padding: 1.5rem 1.7rem;
+      border: 1px solid var(--border);
+      box-shadow: var(--card-shadow);
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 25px 40px -12px rgba(0,0,0,0.25);
+    }
+
+    .card-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-left: 5px solid var(--primary-glow);
+      padding-left: 16px;
+    }
+
+    .risk-badge {
+      display: inline-block;
+      padding: 6px 18px;
+      border-radius: 60px;
+      font-weight: 800;
+      font-size: 0.8rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .low { background: #10b98122; color: #0a5c3e; border-left: 3px solid #10b981; }
+    .medium { background: #f59e0b22; color: #b45309; border-left: 3px solid #f59e0b; }
+    .high { background: #ef444422; color: #9b2c2c; border-left: 3px solid #ef4444; }
+    body.dark .low { color: #a7f3d0; }
+    body.dark .medium { color: #fde68a; }
+    body.dark .high { color: #fecaca; }
+
+    .progress-bar {
+      background: var(--border);
+      border-radius: 40px;
+      height: 12px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 12px;
+      border-radius: 40px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary-glow), #3b82f6);
+      transition: width 0.5s ease;
+    }
+
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .explain-panel {
+      background: rgba(0,0,0,0.05);
+      padding: 12px 16px;
+      border-radius: 24px;
+      margin-top: 14px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    body.dark .explain-panel { background: rgba(255,255,255,0.05); }
+
+    .hidden-dashboard {
+      display: none;
+    }
+
+    .alert-banner {
+      background: linear-gradient(95deg, #fef3c7, #ffedd5);
+      color: #92400e;
+      padding: 14px 20px;
+      border-radius: 60px;
+      margin-bottom: 24px;
+      font-weight: 700;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.01); } 100% { opacity: 0.8; } }
+
+    button {
+      background: var(--primary);
+      border: none;
+      padding: 10px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover { filter: brightness(1.05); transform: scale(0.98); }
+
+    canvas { max-height: 210px; width: 100%; margin-top: 12px; }
+
+    /* Planner styling */
+    .planner-slot {
+      background: rgba(0,0,0,0.03);
+      border-radius: 28px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    body.dark .planner-slot { background: rgba(255,255,255,0.05); }
+
+    @media (max-width: 760px) {
+      body { padding: 16px; cursor: auto; }
+      .custom-cursor { display: none; }
+      .dashboard-grid { gap: 18px; }
+      .header-left { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Custom Animated Cursor with Emoji -->
+  <div class="custom-cursor" id="customCursor"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="header-left">
+      <button class="relax-btn" id="relaxModeBtn">
+        <i class="fas fa-spa"></i> 🧘 Relaxation Mode
+      </button>
+      <h1><i class="fas fa-robot"></i> AI HealthSim Pro <span style="font-size:1rem;">🧠✨</span></h1>
+    </div>
+    <div><button class="mode-toggle" id="darkModeToggle"><i class="fas fa-moon"></i> Dark/Light Mode</button></div>
+  </div>
+
+  <!-- DATA ENTRY PANEL -->
+  <div class="data-entry-panel" id="dataEntryPanel">
+    <div class="entry-title"><i class="fas fa-notes-medical"></i> 📊 Enter Your Health Data</div>
+    <div class="form-grid">
+      <div class="input-group"><label>😴 Sleep (hours)</label><input type="number" id="sleepHrs" value="7" step="0.5"></div>
+      <div class="input-group"><label>💧 Water (L)</label><input type="number" id="waterIntake" value="2.5" step="0.2"></div>
+      <div class="input-group"><label>🏃 Exercise (min)</label><input type="number" id="exerciseMins" value="35" step="5"></div>
+      <div class="input-group"><label>📱 Screen time (hrs)</label><input type="number" id="screenTime" value="5" step="0.5"></div>
+      <div class="input-group"><label>🍽️ Diet type</label><select id="dietType"><option value="healthy">Healthy</option><option value="moderate">Moderate</option><option value="junk">Junk</option></select></div>
+      <div class="input-group"><label>🍎 Calories</label><input type="number" id="calories" value="2100"></div>
+      <div class="input-group"><label>🛌 Bedtime</label><input type="time" id="sleepTime" value="22:30"></div>
+      <div class="input-group"><label>⏰ Wake-up</label><input type="time" id="wakeTime" value="06:30"></div>
+      <div class="input-group"><label>👣 Steps</label><input type="number" id="steps" value="8000"></div>
+      <div class="input-group"><label>❤️ Age</label><input type="number" id="age" value="32"></div>
+      <div class="input-group"><label>😟 Stress (1-10)</label><input type="number" id="stress" value="4"></div>
+      <div class="input-group"><label>🏋️ Exercise habit</label><select id="exerciseHabit"><option value="active">Active</option><option value="moderate">Moderate</option><option value="sedentary">Sedentary</option></select></div>
+      <div class="input-group"><label>🧠 Mood (text)</label><input type="text" id="moodText" placeholder="e.g., energetic, calm, tired"></div>
+    </div>
+    <div style="text-align: center;">
+      <button class="primary-btn" id="generateDashboardBtn"><i class="fas fa-chart-line"></i> ✨ Generate AI Dashboard & Predictions ✨</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD (hidden until generate) -->
+  <div id="dashboardContainer" class="hidden-dashboard">
+    <div id="smartAlertArea"></div>
+    <div class="dashboard-grid">
+      <!-- Unified Risk -->
+      <div class="card"><div class="card-title"><i class="fas fa-chart-simple"></i> 🧬 Unified AI Risk Score</div>
+        <div class="flex-between"><span>Overall Health Risk:</span><strong id="globalRiskValue">--</strong></div>
+        <div class="progress-bar"><div class="progress-fill" id="globalRiskFill"></div></div>
+        <div id="globalRiskBadge" class="risk-badge">--</div>
+        <div class="explain-panel" id="explainBox"><i class="fas fa-brain"></i> AI reasoning ready.</div>
+        <button id="scenarioCompareBtn"><i class="fas fa-chart-simple"></i> 🔄 Compare Improved Routine</button>
+        <div id="scenarioResult" style="margin-top:12px; font-size:0.85rem"></div>
+      </div>
+
+      <div class="card"><div class="card-title"><i class="fas fa-clock"></i> 📅 Daily Predictor</div>
+        <div id="dailyRiskResult" class="risk-badge">--</div><div id="dailyRiskExplain">—</div>
+        <div class="progress-bar mt-2"><div class="progress-fill" id="dailyRiskFill"></div></div>
+      </div>
+
+      <div class="card"><div class="card-title"><i class="fas fa-apple-alt"></i> 🥗 Diet & Nutrition AI</div>
+        <div class="flex-between"><span>Weight trend:</span><span id="weightImpact">--</span></div><div>Energy: <span id="energyLevel">--</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="energyMeterFill"></div></div>
+        <div id="dietFutureImpact">Future prediction: --</div>
+      </div>
+
+      <div class="card"><div class="card-title"><i class="fas fa-bed"></i> 🌙 Sleep AI</div>
+        <div>Quality: <strong id="sleepQuality">--</strong></div><div>Productivity: <span id="productivityScore">--</span></div>
+        <div>Fatigue: <span id="fatigueLevel">--</span></div><div id="sleepSuggestion" class="explain-panel"></div>
+      </div>
+
+      <div class="card"><div class="card-title"><i class="fas fa-heartbeat"></i> 💪 Fitness Simulator</div>
+        <div>Fitness Score: <strong id="fitnessScore">--</strong> /100</div><div>Goal: <span id="goalStatus">--</span></div>
+        <button id="setGoalBtn">🎯 Set 8000 Steps Goal</button><div id="improveOverTime">📈 4-week gain: --</div>
+      </div>
+
+      <div class="card"><div class="card-title"><i class="fas fa-heart"></i> ❤️ Heart Risk AI</div>
+        <div>Heart Risk: <span id="heartRiskLabel" class="risk-badge">--</span></div><div id="heartScenario">Future: --</div>
+        <div id="heartPrevent">💊 Suggestion: --</div>
+      </div>
+
+      <div class="card"><div class="card-title"><i class="fas fa-brain"></i> 🧠 Mental Health AI</div>
+        <div>Mood: <strong id="detectedMood">—</strong></div><div>Stress pattern: <span id="stressPattern">--</span></div>
+        <div id="relaxTip">🧘 Tip: --</div><button id="reanalyzeMoodBtn" style="background:#475569;"><i class="fas fa-smile"></i> Re-analyze Mood</button>
+      </div>
+
+      <div class="card"><div class="card-title"><i class="fas fa-calendar-alt"></i> 📅 Smart AI Planner</div>
+        <div id="plannerList"></div><button id="optimizePlannerBtn"><i class="fas fa-magic"></i> ✨ AI Optimize Schedule</button>
+        <div id="plannerImpact" class="explain-panel">📌 Schedule impact simulator</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 32px;">
+      <div class="card-title"><i class="fas fa-chart-pie"></i> 🎯 Health Radar (AI-Powered)</div>
+      <canvas id="healthChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Custom Cursor with Emoji Magic
+  const cursor = document.getElementById('customCursor');
+  if (cursor) {
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    const interactive = document.querySelectorAll('button, .card, input, select, .primary-btn');
+    interactive.forEach(el => {
+      el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+      el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+    });
+  }
+
+  // Relaxation Mode Button - Opens relaxation.html
+  document.getElementById('relaxModeBtn').addEventListener('click', () => {
+    window.location.href = 'relaxation.html';
+  });
+
+  let chartInstance = null;
+
+  function computeUnifiedRisk() {
+    const sleep = parseFloat(document.getElementById('sleepHrs').value) || 7;
+    const water = parseFloat(document.getElementById('waterIntake').value) || 2;
+    const exercise = parseFloat(document.getElementById('exerciseMins').value) || 30;
+    const screen = parseFloat(document.getElementById('screenTime').value) || 5;
+    let dietScore = { healthy: 0, moderate: 0.35, junk: 0.7 }[document.getElementById('dietType').value];
+    let sleepRisk = Math.max(0, Math.min(0.4, (7 - sleep) * 0.1 + (sleep > 9 ? (sleep-9)*0.05 : 0)));
+    let waterRisk = Math.max(0, Math.min(0.2, (2.5 - water) * 0.1));
+    let exerciseRisk = Math.max(0, Math.min(0.3, (30 - exercise) * 0.01));
+    let screenRisk = Math.max(0, Math.min(0.3, (screen - 4) * 0.05));
+    let rawRisk = (sleepRisk + waterRisk + exerciseRisk + screenRisk + dietScore) * 100 / 1.6;
+    return Math.min(100, Math.max(0, Math.round(rawRisk)));
+  }
+
+  function getRiskCategory(score) {
+    if (score < 35) return { text: 'Low Risk 🟢', class: 'low' };
+    if (score < 65) return { text: 'Medium Risk 🟡', class: 'medium' };
+    return { text: 'High Risk 🔴', class: 'high' };
+  }
+
+  function updateDiet() {
+    let cal = parseFloat(document.getElementById('calories').value) || 2000;
+    let dietVal = document.getElementById('dietType').value;
+    let impact = dietVal === 'junk' ? "gain +0.5kg/week" : (dietVal === 'healthy' ? "stable / mild loss" : "slight variation");
+    document.getElementById('weightImpact').innerText = impact;
+    let energy = dietVal === 'healthy' ? 88 : (dietVal === 'moderate' ? 68 : 45);
+    if (cal > 2700) energy -= 12;
+    energy = Math.min(98, Math.max(20, energy));
+    document.getElementById('energyLevel').innerHTML = energy + "%";
+    document.getElementById('energyMeterFill').style.width = energy + "%";
+    let future = dietVal === 'junk' ? "⚠️ High metabolic risk" : (dietVal === 'healthy' ? "✅ Optimal longevity" : "Moderate health");
+    document.getElementById('dietFutureImpact').innerHTML = `Future: ${future}`;
+  }
+
+  function updateSleepAI() {
+    let sleepT = document.getElementById('sleepTime').value, wakeT = document.getElementById('wakeTime').value;
+    let getH = (t) => { let [h,m]=t.split(':'); return parseInt(h)+parseInt(m)/60; };
+    let sleepH = getH(sleepT), wakeH = getH(wakeT);
+    let total = wakeH < sleepH ? (24 - sleepH + wakeH) : (wakeH - sleepH);
+    let quality = total >= 7 && total <= 9 ? 94 : (total >= 5 ? 58 : 32);
+    quality = Math.min(100, quality);
+    document.getElementById('sleepQuality').innerHTML = `${Math.round(quality)}% (${total.toFixed(1)}h)`;
+    let productivity = Math.min(100, quality + 5);
+    let fatigue = 100 - quality + (total<6?15:0);
+    document.getElementById('productivityScore').innerHTML = `${Math.round(productivity)}%`;
+    document.getElementById('fatigueLevel').innerHTML = `${Math.min(95,Math.round(fatigue))}%`;
+    let suggestion = total < 6.5 ? "🌙 Go to bed earlier for deep sleep" : "⭐ Great sleep consistency!";
+    document.getElementById('sleepSuggestion').innerHTML = `<i class="fas fa-moon"></i> ${suggestion}`;
+  }
+
+  function updateFitness() {
+    let steps = parseFloat(document.getElementById('steps').value) || 0;
+    let ex = parseFloat(document.getElementById('exerciseMins').value) || 0;
+    let score = Math.min(100, Math.round((steps/10000)*45 + (ex/50)*40 + 15));
+    document.getElementById('fitnessScore').innerText = score;
+    let goalStat = steps >= 8000 ? "🎉 Goal achieved!" : `🚶 Need ${8000-steps} more steps`;
+    document.getElementById('goalStatus').innerHTML = goalStat;
+    let impr = Math.min(30, Math.floor((ex-15)/3)*2);
+    if(impr<0) impr=0;
+    document.getElementById('improveOverTime').innerHTML = `📈 +${impr}% fitness in 4 weeks`;
+  }
+  function setGoal() { alert("🏆 Daily goal 8000 steps set! Keep moving!"); updateFitness(); }
+
+  function updateHeartRisk() {
+    let age = parseInt(document.getElementById('age').value);
+    let stress = parseInt(document.getElementById('stress').value);
+    let habit = document.getElementById('exerciseHabit').value;
+    let riskRaw = (age>55?32:(age>35?16:5)) + (stress*3) + (habit==='sedentary'?30:(habit==='moderate'?12:0));
+    let riskFinal = Math.min(98, riskRaw);
+    let category = riskFinal<35?"Low Risk":(riskFinal<65?"Medium Risk":"High Risk");
+    let cls = riskFinal<35?"low":(riskFinal<65?"medium":"high");
+    document.getElementById('heartRiskLabel').innerHTML = category;
+    document.getElementById('heartRiskLabel').className = `risk-badge ${cls}`;
+    document.getElementById('heartScenario').innerHTML = `🔮 ${riskFinal>60?"High risk scenario - take action":(riskFinal>30?"Moderate risk manageable":"Low risk, keep habits")}`;
+    let prevent = (stress>6?"🧘 Mindfulness & relaxation. ":"") + (habit==='sedentary'?" 🚶 Daily walking. ":"") + "❤️ Healthy fats & fiber.";
+    document.getElementById('heartPrevent').innerHTML = `💡 ${prevent}`;
+  }
+
+  function analyzeMood() {
+    let text = document.getElementById('moodText').value.toLowerCase();
+    let mood = "neutral";
+    if (text.includes("stress") || text.includes("anxious")) mood = "stressed 😰";
+    else if (text.includes("happy") || text.includes("great") || text.includes("energetic")) mood = "positive 😊";
+    else if (text.includes("tired") || text.includes("exhaust")) mood = "fatigued 😴";
+    else if (text.includes("sad")) mood = "low 🌧️";
+    else mood = "calm 🧘";
+    document.getElementById('detectedMood').innerHTML = mood;
+    let history = JSON.parse(localStorage.getItem("moodHistory") || "[]");
+    history.push(mood);
+    if(history.length>8) history.shift();
+    localStorage.setItem("moodHistory", JSON.stringify(history));
+    let trend = history.filter(m=>m.includes("stressed")).length>2 ? "⚠️ Rising stress pattern" : "Stable emotional trend";
+    document.getElementById('stressPattern').innerHTML = trend;
+    let relax = mood.includes("stressed") ? "🌿 5-min deep breathing + nature sounds" : (mood.includes("fatigued")?"⚡ Power nap & hydration":"✨ Keep balance with micro-breaks");
+    document.getElementById('relaxTip').innerHTML = `🧘 ${relax}`;
+  }
+
+  let plannerItems = [{act:"😴 Sleep",time:"10:30 PM"},{act:"🍳 Breakfast",time:"7:30 AM"},{act:"💻 Work",time:"9:00 AM"},{act:"🏃 Exercise",time:"5:30 PM"},{act:"🥗 Dinner",time:"7:00 PM"}];
+  function renderPlanner() {
+    let container = document.getElementById('plannerList');
+    if(!container) return;
+    container.innerHTML = "";
+    plannerItems.forEach((item,idx)=>{
+      let div = document.createElement('div'); div.className="planner-slot";
+      div.innerHTML = `<span><i class="far fa-clock"></i> ${item.act}</span><input type="text" value="${item.time}" data-idx="${idx}" class="planner-time-edit" style="width:110px; border-radius:60px; padding:6px; background:var(--surface); border:1px solid var(--border);">`;
+      container.appendChild(div);
+    });
+    document.querySelectorAll('.planner-time-edit').forEach(inp=> inp.addEventListener('change',(e)=>{
+      let idx = inp.dataset.idx;
+      plannerItems[idx].time = inp.value;
+      localStorage.setItem("customPlanner", JSON.stringify(plannerItems));
+      simulatePlannerImpact();
+    }));
+  }
+  function simulatePlannerImpact() { document.getElementById('plannerImpact').innerHTML = "✨ Optimized schedule improves energy & reduces stress by 18%."; }
+  function optimizePlanner() { plannerItems = [{act:"😴 Early Sleep",time:"10:00 PM"},{act:"🥑 Healthy Breakfast",time:"7:15 AM"},{act:"🎯 Focus Block",time:"9:00 AM"},{act:"🏋️‍♂️ Evening Run",time:"5:45 PM"},{act:"🥦 Light Dinner",time:"7:00 PM"}]; renderPlanner(); simulatePlannerImpact(); localStorage.setItem("customPlanner", JSON.stringify(plannerItems)); alert("✨ AI optimized routine: better recovery & focus!"); }
+
+  function compareScenario() {
+    let current = computeUnifiedRisk();
+    let improved = Math.max(10, current - 14);
+    document.getElementById('scenarioResult').innerHTML = `<i class="fas fa-chart-line"></i> 🔄 Current risk ${current} → Improved: ${improved} (${improved<current?"✅ Healthier path! Add 1h sleep & more water":"Keep consistency"})`;
+  }
+
+  function refreshDashboard() {
+    let risk = computeUnifiedRisk();
+    document.getElementById('globalRiskValue').innerText = risk;
+    document.getElementById('globalRiskFill').style.width = risk+"%";
+    let cat = getRiskCategory(risk);
+    document.getElementById('globalRiskBadge').innerText = cat.text;
+    document.getElementById('globalRiskBadge').className = `risk-badge ${cat.class}`;
+    let reasons = [];
+    if(parseFloat(document.getElementById('sleepHrs').value)<6) reasons.push("😴 low sleep");
+    if(parseFloat(document.getElementById('screenTime').value)>7) reasons.push("📱 high screen time");
+    if(parseFloat(document.getElementById('waterIntake').value)<2) reasons.push("💧 dehydration");
+    document.getElementById('explainBox').innerHTML = `<i class="fas fa-brain"></i> 🧠 AI: ${reasons.length?reasons.join(", "):"Good metrics"} → Risk ${risk}/100 (${cat.text})`;
+    document.getElementById('dailyRiskResult').innerHTML = `Daily Risk: ${risk} (${cat.text})`;
+    document.getElementById('dailyRiskResult').className = `risk-badge ${cat.class}`;
+    document.getElementById('dailyRiskFill').style.width = risk+"%";
+    updateDiet(); updateSleepAI(); updateFitness(); updateHeartRisk(); analyzeMood(); simulatePlannerImpact();
+
+    if(chartInstance) chartInstance.destroy();
+    let ctx = document.getElementById('healthChart').getContext('2d');
+    let sleepScore = Math.min(100, (parseFloat(document.getElementById('sleepHrs').value)/8)*100);
+    let fitScore = parseInt(document.getElementById('fitnessScore').innerText)||50;
+    let heartVal = document.getElementById('heartRiskLabel').innerText.includes("Low")?25:(document.getElementById('heartRiskLabel').innerText.includes("Medium")?60:85);
+    let moodScore = document.getElementById('detectedMood').innerText.includes("positive")?88:(document.getElementById('detectedMood').innerText.includes("stressed")?38:65);
+    chartInstance = new Chart(ctx, { type: 'radar', data: { labels: ['Sleep', 'Fitness', 'Heart Safety', 'Mental'], datasets: [{ label: 'Your Health', data: [sleepScore, fitScore, 100-heartVal, moodScore], backgroundColor: 'rgba(44,156,212,0.2)', borderColor: '#2c9cd4', pointBackgroundColor: '#1a5f7a', pointBorderColor: '#fff' }] }, options: { responsive: true, maintainAspectRatio: true } });
+
+    let alertDiv = document.getElementById('smartAlertArea');
+    if(risk>70) alertDiv.innerHTML = `<div class="alert-banner"><i class="fas fa-exclamation-triangle"></i> 🚨 CRITICAL ALERT: High health risk! Immediate lifestyle adjustment needed.</div>`;
+    else if(risk>50) alertDiv.innerHTML = `<div class="alert-banner"><i class="fas fa-info-circle"></i> ⚠️ Moderate risk: improve sleep and nutrition for better future.</div>`;
+    else alertDiv.innerHTML = `<div class="alert-banner" style="background:#d1fae5; color:#065f46;"><i class="fas fa-check-circle"></i> 🌟 Excellent! Your routine is optimized. Keep thriving!</div>`;
+    localStorage.setItem("lastHealthRisk", risk);
+  }
+
+  document.getElementById('generateDashboardBtn').addEventListener('click', () => {
+    document.getElementById('dashboardContainer').classList.remove('hidden-dashboard');
+    refreshDashboard();
+    setTimeout(() => document.getElementById('dashboardContainer').scrollIntoView({ behavior: 'smooth' }), 100);
+  });
+  document.getElementById('scenarioCompareBtn')?.addEventListener('click', compareScenario);
+  document.getElementById('setGoalBtn')?.addEventListener('click', setGoal);
+  document.getElementById('optimizePlannerBtn')?.addEventListener('click', () => { optimizePlanner(); refreshDashboard(); });
+  document.getElementById('reanalyzeMoodBtn')?.addEventListener('click', () => { analyzeMood(); refreshDashboard(); });
+  document.getElementById('darkModeToggle').addEventListener('click',()=>{ document.body.classList.toggle('dark'); if(cursor) cursor.style.borderColor = 'var(--primary-glow)'; });
+  document.getElementById('dashboardContainer').classList.add('hidden-dashboard');
+  renderPlanner();
+  let storedPlan = localStorage.getItem("customPlanner");
+  if(storedPlan) { plannerItems = JSON.parse(storedPlan); renderPlanner(); }
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yoga & Exercises | HealthAI+</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { text-align: center; color: white; margin-bottom: 40px; }
+    .header h1 { font-size: 2.5rem; margin-bottom: 10px; }
+    .back-btn { background: rgba(255,255,255,0.2); border: none; padding: 10px 20px; border-radius: 30px; color: white; cursor: pointer; margin-bottom: 20px; }
+    .yoga-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    .yoga-card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 30px;
+      padding: 25px;
+      text-align: center;
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+    .yoga-card:hover { transform: translateY(-10px); }
+    .yoga-card i { font-size: 3rem; color: #11998e; margin-bottom: 15px; }
+    .yoga-card h3 { font-size: 1.3rem; margin-bottom: 10px; }
+    .timer { font-size: 3rem; font-weight: bold; color: #11998e; margin: 20px 0; }
+    button { background: #11998e; color: white; border: none; padding: 12px 25px; border-radius: 30px; cursor: pointer; margin: 5px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1><i class="fas fa-praying-hands"></i> Yoga & Exercises</h1>
+    <p>Find your inner peace and strength</p>
+    <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+  </div>
+  <div class="yoga-grid">
+    <div class="yoga-card" onclick="startExercise('Mountain Pose', 30)">
+      <i class="fas fa-mountain"></i>
+      <h3>Mountain Pose</h3>
+      <p>Improves posture & balance</p>
+    </div>
+    <div class="yoga-card" onclick="startExercise('Downward Dog', 45)">
+      <i class="fas fa-dog"></i>
+      <h3>Downward Dog</h3>
+      <p>Stretches whole body</p>
+    </div>
+    <div class="yoga-card" onclick="startExercise('Tree Pose', 40)">
+      <i class="fas fa-tree"></i>
+      <h3>Tree Pose</h3>
+      <p>Improves focus & stability</p>
+    </div>
+    <div class="yoga-card" onclick="startExercise('Sun Salutation', 60)">
+      <i class="fas fa-sun"></i>
+      <h3>Sun Salutation</h3>
+      <p>Full body warm-up</p>
+    </div>
+    <div class="yoga-card" onclick="startExercise('Child Pose', 60)">
+      <i class="fas fa-child"></i>
+      <h3>Child's Pose</h3>
+      <p>Relaxation & rest</p>
+    </div>
+    <div class="yoga-card" onclick="startExercise('Warrior Pose', 50)">
+      <i class="fas fa-fist-raised"></i>
+      <h3>Warrior Pose</h3>
+      <p>Builds strength & endurance</p>
+    </div>
+  </div>
+  <div id="exerciseModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); background:white; border-radius:30px; padding:30px; text-align:center; z-index:1000;">
+    <h2 id="exerciseName"></h2>
+    <div class="timer" id="timerDisplay">00:00</div>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+<script>
+  let timerInterval, currentTime, exerciseName;
+  function startExercise(name, duration) {
+    exerciseName = name;
+    currentTime = duration;
+    document.getElementById('exerciseName').innerHTML = `<i class="fas fa-spa"></i> ${name}`;
+    document.getElementById('timerDisplay').innerHTML = `${duration}:00`;
+    document.getElementById('exerciseModal').style.display = 'block';
+  }
+  function startTimer() {
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      if(currentTime <= 0) {
+        clearInterval(timerInterval);
+        alert(`🎉 Great job! You completed ${exerciseName}!`);
+        closeModal();
+      } else {
+        currentTime--;
+        let mins = Math.floor(currentTime / 60);
+        let secs = currentTime % 60;
+        document.getElementById('timerDisplay').innerHTML = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+      }
+    }, 1000);
+  }
+  function closeModal() {
+    clearInterval(timerInterval);
+    document.getElementById('exerciseModal').style.display = 'none';
+  }
+</script>
+</body>
+</html>

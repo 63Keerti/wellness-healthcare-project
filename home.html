@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>HealthAI+ | Smart Healthcare Assistant</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://images.unsplash.com/photo-1505751172876-fa5323c6de3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') center/cover no-repeat;
+      filter: blur(8px) brightness(0.4);
+      z-index: -2;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.85), rgba(118, 75, 162, 0.85));
+      z-index: -1;
+    }
+
+    .floating-shapes {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .shape {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(5px);
+      border-radius: 50%;
+      animation: float 20s infinite ease-in-out;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-50px) rotate(180deg); }
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(20px);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      box-shadow: 0 5px 30px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      animation: slideDown 0.5s ease;
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: #2c3e50;
+      font-weight: 600;
+      transition: 0.3s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      transition: width 0.3s;
+    }
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+    .login-btn-nav {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white !important;
+      padding: 0.7rem 1.8rem;
+      border-radius: 50px;
+      box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hero {
+      text-align: center;
+      color: white;
+      padding: 3rem 2rem;
+      margin-top: 1rem;
+      animation: fadeInUp 0.8s ease;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #fff, #e0e7ff);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+    }
+    .date-time-box {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(15px);
+      border-radius: 60px;
+      padding: 1rem 2rem;
+      display: inline-block;
+      font-size: 1.1rem;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .login-box {
+      max-width: 480px;
+      margin: 3rem auto;
+      background: rgba(255,255,255,0.98);
+      backdrop-filter: blur(20px);
+      border-radius: 40px;
+      padding: 2.5rem;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .login-box:hover {
+      transform: translateY(-5px);
+    }
+    .login-box h2 {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1.5rem;
+    }
+    .time-greeting {
+      font-size: 1.2rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+    .input-group {
+      margin-bottom: 1.2rem;
+      text-align: left;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+    .input-group input {
+      width: 100%;
+      padding: 12px 18px;
+      border: 2px solid #e0e0e0;
+      border-radius: 30px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    .input-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: all 0.3s;
+    }
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+    }
+    .switch-auth {
+      margin-top: 1.2rem;
+      color: #667eea;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .error-msg {
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+    .section {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(15px);
+      border-radius: 40px;
+      padding: 2.5rem;
+      margin: 2rem 0;
+    }
+    .section h2 {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1.5rem;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .feature-card {
+      background: white;
+      padding: 1.8rem;
+      border-radius: 25px;
+      text-align: center;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .feature-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+    .feature-card i {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: white;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(10px);
+      margin-top: 3rem;
+      border-radius: 30px;
+    }
+    .hidden { display: none; }
+    @media (max-width: 768px) {
+      .navbar { flex-direction: column; gap: 1rem; }
+      .hero h1 { font-size: 2rem; }
+      .login-box { margin: 2rem 1rem; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="floating-shapes">
+    <div class="shape" style="width: 100px; height: 100px; top: 10%; left: 5%; animation-duration: 25s;"></div>
+    <div class="shape" style="width: 150px; height: 150px; bottom: 15%; right: 8%; animation-duration: 30s;"></div>
+    <div class="shape" style="width: 70px; height: 70px; top: 40%; right: 20%; animation-duration: 18s;"></div>
+    <div class="shape" style="width: 120px; height: 120px; bottom: 30%; left: 10%; animation-duration: 22s;"></div>
+  </div>
+
+  <nav class="navbar">
+    <div class="logo"><i class="fas fa-heartbeat"></i> HealthAI+</div>
+    <div class="nav-links">
+      <a href="#" onclick="showHome()">Home</a>
+      <a href="#" onclick="showAbout()">About</a>
+      <a href="#" onclick="showContact()">Contact</a>
+      <a href="#" class="login-btn-nav" onclick="showLoginModal()"><i class="fas fa-user-circle"></i> Login / Sign Up</a>
+    </div>
+  </nav>
+
+  <div class="container" id="mainContent">
+    <div id="homeSection">
+      <div class="hero">
+        <h1>✨ Your Personal AI Healthcare Assistant ✨</h1>
+        <p>Track routines, get AI predictions, and transform your lifestyle</p>
+        <div class="date-time-box" id="dateTimeBox"></div>
+      </div>
+
+      <div class="login-box" id="loginBox">
+        <h2><i class="fas fa-user-md"></i> Access Your Health Dashboard</h2>
+        <div class="time-greeting" id="timeGreeting">Good day!</div>
+        
+        <div id="loginFormBox">
+          <div class="input-group">
+            <label><i class="fas fa-envelope"></i> Email Address</label>
+            <input type="email" id="loginEmail" placeholder="your@email.com">
+          </div>
+          <div class="input-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="loginPassword" placeholder="Enter password">
+          </div>
+          <button class="login-btn" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> Login to Dashboard</button>
+          <div class="switch-auth" onclick="showSignup()">✨ Don't have an account? <strong>Create Account →</strong></div>
+          <div id="loginError" class="error-msg"></div>
+        </div>
+
+        <div id="signupFormBox" style="display:none;">
+          <div class="input-group">
+            <label><i class="fas fa-user"></i> Full Name</label>
+            <input type="text" id="signupName" placeholder="Your name">
+          </div>
+          <div class="input-group">
+            <label><i class="fas fa-envelope"></i> Email Address</label>
+            <input type="email" id="signupEmail" placeholder="your@email.com">
+          </div>
+          <div class="input-group">
+            <label><i class="fas fa-lock"></i> Password</label>
+            <input type="password" id="signupPassword" placeholder="Create password (min 4 chars)">
+          </div>
+          <button class="login-btn" onclick="handleSignup()"><i class="fas fa-user-plus"></i> Create Free Account</button>
+          <div class="switch-auth" onclick="showLogin()">🔙 Already have an account? <strong>Login</strong></div>
+          <div id="signupError" class="error-msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="aboutSection" style="display:none;">
+      <div class="section">
+        <h2><i class="fas fa-info-circle"></i> About HealthAI+</h2>
+        <p style="font-size: 1.1rem; line-height: 1.6;">HealthAI+ is an advanced AI-powered healthcare simulation system that helps you track your daily routines, predict health risks, and provides personalized suggestions for a healthier lifestyle.</p>
+        <div class="features-grid">
+          <div class="feature-card"><i class="fas fa-chart-line"></i><h3>AI Risk Prediction</h3><p>Get real-time health risk scores</p></div>
+          <div class="feature-card"><i class="fas fa-brain"></i><h3>Smart Simulations</h3><p>What-if scenarios for lifestyle impacts</p></div>
+          <div class="feature-card"><i class="fas fa-pills"></i><h3>Medication Reminders</h3><p>Never miss your medicines</p></div>
+          <div class="feature-card"><i class="fas fa-apple-alt"></i><h3>Diet & Exercise</h3><p>Track calories and fitness</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="contactSection" style="display:none;">
+      <div class="section">
+        <h2><i class="fas fa-envelope"></i> Contact Us</h2>
+        <div class="contact-info">
+          <p><i class="fas fa-map-marker-alt"></i> 123 Healthcare Avenue, Medical District, NY 10001</p>
+          <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+          <p><i class="fas fa-envelope"></i> support@healthaiplus.com</p>
+          <p><i class="fas fa-clock"></i> Mon-Fri: 9AM - 6PM | 24/7 Online Support</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p><i class="fas fa-heart" style="color: #ff6b6b;"></i> HealthAI+ | Smart Healthcare for Everyone <i class="fas fa-heart" style="color: #ff6b6b;"></i></p>
+    <p style="margin-top: 0.5rem;">© 2024 HealthAI+ - Empowering healthier lives with AI</p>
+  </footer>
+
+  <script>
+    // ========== PASSWORD HASHING USING WEB CRYPTO API ==========
+    async function hashPassword(password) {
+      const encoder = new TextEncoder();
+      const data = encoder.encode(password);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+
+    // ========== USER MANAGEMENT WITH HASHED PASSWORDS ==========
+    function getUsers() {
+      const usersJson = localStorage.getItem('healthAppUsers');
+      if (!usersJson) return {};
+      return JSON.parse(usersJson);
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem('healthAppUsers', JSON.stringify(users));
+    }
+
+    // ========== DATE & TIME UPDATES ==========
+    function updateDateTime() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const dateString = now.toLocaleDateString('en-US', options);
+      const timeString = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      document.getElementById('dateTimeBox').innerHTML = `<i class="far fa-calendar-alt"></i> ${dateString} | <i class="far fa-clock"></i> ${timeString}`;
+      
+      const hour = now.getHours();
+      let greeting = "";
+      if (hour >= 5 && hour < 12) greeting = "Good Morning! Rise & Shine! 🌅";
+      else if (hour >= 12 && hour < 17) greeting = "Good Afternoon! Keep your energy high! ☀️";
+      else if (hour >= 17 && hour < 21) greeting = "Good Evening! Time to review your day! 🌆";
+      else greeting = "Good Night! Rest well for tomorrow! 🌙";
+      
+      const greetingElement = document.getElementById('timeGreeting');
+      if (greetingElement) greetingElement.innerHTML = `<i class="fas fa-smile-wink"></i> ${greeting}`;
+    }
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+
+    // ========== PAGE NAVIGATION ==========
+    function showHome() {
+      document.getElementById('homeSection').style.display = 'block';
+      document.getElementById('aboutSection').style.display = 'none';
+      document.getElementById('contactSection').style.display = 'none';
+    }
+    function showAbout() {
+      document.getElementById('homeSection').style.display = 'none';
+      document.getElementById('aboutSection').style.display = 'block';
+      document.getElementById('contactSection').style.display = 'none';
+    }
+    function showContact() {
+      document.getElementById('homeSection').style.display = 'none';
+      document.getElementById('aboutSection').style.display = 'none';
+      document.getElementById('contactSection').style.display = 'block';
+    }
+    function showLoginModal() {
+      document.getElementById('homeSection').style.display = 'block';
+      document.getElementById('aboutSection').style.display = 'none';
+      document.getElementById('contactSection').style.display = 'none';
+      document.getElementById('loginBox').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function showSignup() {
+      document.getElementById('loginFormBox').style.display = 'none';
+      document.getElementById('signupFormBox').style.display = 'block';
+      document.getElementById('loginError').style.display = 'none';
+      document.getElementById('signupError').style.display = 'none';
+    }
+
+    function showLogin() {
+      document.getElementById('loginFormBox').style.display = 'block';
+      document.getElementById('signupFormBox').style.display = 'none';
+      document.getElementById('loginError').style.display = 'none';
+      document.getElementById('signupError').style.display = 'none';
+    }
+
+    // ========== SIGNUP WITH PASSWORD HASHING ==========
+    async function handleSignup() {
+      const name = document.getElementById('signupName').value.trim();
+      const email = document.getElementById('signupEmail').value.trim();
+      const password = document.getElementById('signupPassword').value;
+      const errorDiv = document.getElementById('signupError');
+
+      if (!name || !email || !password) {
+        errorDiv.innerText = "❌ All fields are required!";
+        errorDiv.style.display = 'block';
+        return;
+      }
+      if (password.length < 4) {
+        errorDiv.innerText = "❌ Password must be at least 4 characters!";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      const users = getUsers();
+      if (users[email]) {
+        errorDiv.innerText = "❌ Email already registered! Please login.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      // Hash the password before storing
+      const hashedPassword = await hashPassword(password);
+      
+      users[email] = { 
+        name: name, 
+        passwordHash: hashedPassword,
+        createdAt: new Date().toISOString() 
+      };
+      saveUsers(users);
+      
+      // Initialize health data for new user
+      const defaultHealthData = {
+        steps: 0, water: 0, sleep: 7, caloriesBurned: 0,
+        routines: [
+          {text: "Wake up by 7am", completed: false},
+          {text: "Drink 2L water", completed: false},
+          {text: "30 min exercise", completed: false},
+          {text: "Sleep before 11pm", completed: false}
+        ],
+        medications: [], meals: [], exerciseHistory: [], healthScores: [75]
+      };
+      localStorage.setItem(`healthData_${email}`, JSON.stringify(defaultHealthData));
+      
+      alert(`✅ Account created successfully, ${name}! Please login.`);
+      showLogin();
+      document.getElementById('signupName').value = '';
+      document.getElementById('signupEmail').value = '';
+      document.getElementById('signupPassword').value = '';
+    }
+
+    // ========== LOGIN WITH PASSWORD HASH VERIFICATION ==========
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errorDiv = document.getElementById('loginError');
+
+      if (!email || !password) {
+        errorDiv.innerText = "❌ Please enter email and password!";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      const users = getUsers();
+      const user = users[email];
+      
+      if (!user) {
+        errorDiv.innerText = "❌ Email not found! Please create an account first.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      // Hash the entered password and compare with stored hash
+      const hashedInputPassword = await hashPassword(password);
+      
+      if (user.passwordHash === hashedInputPassword) {
+        localStorage.setItem('currentHealthUser', email);
+        // ✅ FIXED: Redirect to index.html instead of dashboard.html
+        window.location.href = 'index.html';
+      } else {
+        errorDiv.innerText = "❌ Invalid password! Please try again.";
+        errorDiv.style.display = 'block';
+      }
+    }
+
+    // ========== CREATE DEMO USER WITH HASHED PASSWORD ==========
+    async function createDemoUser() {
+      const users = getUsers();
+      if (!users['demo@health.com']) {
+        const hashedDemoPassword = await hashPassword('123456');
+        users['demo@health.com'] = { 
+          name: 'Demo User', 
+          passwordHash: hashedDemoPassword,
+          createdAt: new Date().toISOString()
+        };
+        saveUsers(users);
+        
+        const demoHealthData = {
+          steps: 6500, water: 2.2, sleep: 7.5, caloriesBurned: 320,
+          routines: [
+            {text: "Wake up by 7am", completed: true},
+            {text: "Drink 2L water", completed: false},
+            {text: "30 min exercise", completed: true},
+            {text: "Sleep before 11pm", completed: false}
+          ],
+          medications: [{name: "Vitamin D", time: "09:00"}],
+          meals: [{type: "Breakfast", food: "Oatmeal", calories: 350}],
+          exerciseHistory: [{activity: "Walking", minutes: 30, calories: 120}],
+          healthScores: [72, 75, 78, 80]
+        };
+        localStorage.setItem(`healthData_demo@health.com`, JSON.stringify(demoHealthData));
+      }
+    }
+
+    // Initialize demo user
+    createDemoUser();
+
+    // Pre-fill demo credentials
+    document.getElementById('loginEmail').value = 'demo@health.com';
+    document.getElementById('loginPassword').value = '123456';
+  </script>
+</body>
+</html>

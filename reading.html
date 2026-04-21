@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Reading | HealthAI+</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Georgia', serif; }
+    body {
+      background: linear-gradient(135deg, #f5f0e1 0%, #e8dcc8 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { text-align: center; margin-bottom: 40px; }
+    .header h1 { font-size: 2.5rem; color: #5d4037; }
+    .back-btn { background: #8d6e63; border: none; padding: 10px 20px; border-radius: 30px; color: white; cursor: pointer; margin-bottom: 20px; }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 25px;
+    }
+    .news-card {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .news-card:hover { transform: translateY(-5px); }
+    .news-card h3 { color: #5d4037; margin-bottom: 15px; font-size: 1.3rem; }
+    .news-card p { color: #666; line-height: 1.6; margin-bottom: 15px; }
+    .read-more { color: #8d6e63; text-decoration: none; font-weight: bold; }
+    .daily-quote {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      border-radius: 30px;
+      padding: 30px;
+      text-align: center;
+      margin-top: 40px;
+    }
+    @media (max-width: 768px) {
+      .news-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1><i class="fas fa-newspaper"></i> Daily Reading Corner</h1>
+    <p>Stay informed & inspired</p>
+    <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i> Back to Dashboard</button>
+  </div>
+  <div class="news-grid" id="newsGrid"></div>
+  <div class="daily-quote">
+    <i class="fas fa-quote-left" style="font-size: 2rem;"></i>
+    <p id="quoteText" style="font-size: 1.3rem; margin: 15px 0;">"The only way to do great work is to love what you do."</p>
+    <p id="quoteAuthor">- Steve Jobs</p>
+  </div>
+</div>
+<script>
+  const articles = [
+    { title: "10 Morning Habits of Successful People", content: "Starting your day right can transform your life. Here are proven habits that boost productivity and happiness...", source: "Health Today" },
+    { title: "The Power of Mindfulness Meditation", content: "Research shows just 10 minutes of daily meditation reduces stress and improves focus dramatically...", source: "Mindful Living" },
+    { title: "New Breakthrough in Heart Health", content: "Scientists discover simple lifestyle changes that reduce heart disease risk by 40%...", source: "Medical News" }
+  ];
+  const quotes = [
+    { text: "The mind is everything. What you think you become.", author: "Buddha" },
+    { text: "Health is the greatest gift.", author: "Buddha" },
+    { text: "Take care of your body. It's the only place you have to live.", author: "Jim Rohn" },
+    { text: "The greatest wealth is health.", author: "Virgil" }
+  ];
+  function loadNews() {
+    const grid = document.getElementById('newsGrid');
+    grid.innerHTML = articles.map(article => `
+      <div class="news-card">
+        <h3>${article.title}</h3>
+        <p>${article.content}</p>
+        <a href="#" class="read-more" onclick="alert('Full article: ${article.title}')">Read full article →</a>
+        <p style="margin-top:10px; font-size:0.8rem; color:#999;">Source: ${article.source}</p>
+      </div>
+    `).join('');
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById('quoteText').innerText = `"${randomQuote.text}"`;
+    document.getElementById('quoteAuthor').innerText = `- ${randomQuote.author}`;
+  }
+  loadNews();
+</script>
+</body>
+</html>
